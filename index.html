@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scoop Dreams — Windows Terminal</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍦</text></svg>" />
+  <style>
+    /* ── WINDOWS TERMINAL CHROME ─────────────────────── */
+    :root {
+      /* Campbell color scheme (Windows Terminal default) */
+      --bg:        #0C0C0C;
+      --titlebar:  #1e1e1e;
+      --tabbar:    #1e1e1e;
+      --tab-bg:    #2d2d2d;
+      --tab-act:   #0C0C0C;
+      --tab-hover: #3d3d3d;
+      --fg:        #CCCCCC;
+      --fg-bright: #F2F2F2;
+      --black:     #0C0C0C;
+      --red:       #C50F1F;
+      --green:     #13A10E;
+      --yellow:    #C19C00;
+      --blue:      #0037DA;
+      --magenta:   #881798;
+      --cyan:      #3A96DD;
+      --white:     #CCCCCC;
+      --br-black:  #767676;
+      --br-red:    #E74856;
+      --br-green:  #16C60C;
+      --br-yellow: #F9F1A5;
+      --br-blue:   #3B78FF;
+      --br-magenta:#B4009E;
+      --br-cyan:   #61D6D6;
+      --br-white:  #F2F2F2;
+      --accent:    #3A96DD;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+
+    body {
+      font-family: 'Cascadia Code', 'Cascadia Mono', Consolas, 'Courier New', monospace;
+      background: var(--bg);
+      color: var(--fg);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-top: 68px;
+    }
+
+    /* ── TITLE BAR ───────────────────────────────────── */
+    .wt-titlebar {
+      background: var(--titlebar);
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      user-select: none;
+      position: fixed; top: 0; left: 0; right: 0; z-index: 300;
+      border-bottom: 1px solid #111;
+    }
+    .wt-titlebar-left {
+      display: flex; align-items: center; gap: 0; height: 100%;
+    }
+    .wt-hamburger {
+      width: 46px; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      color: var(--fg); font-size: 16px;
+      transition: background 0.1s; cursor: pointer;
+    }
+    .wt-hamburger:hover { background: rgba(255,255,255,0.08); }
+    .wt-app-name {
+      font-size: 12px; color: var(--fg);
+      opacity: 0.7; letter-spacing: 0.02em;
+      padding-left: 4px;
+    }
+    .wt-window-controls {
+      display: flex; height: 100%;
+    }
+    .wt-wc-btn {
+      width: 46px; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: var(--fg); opacity: 0.8;
+      cursor: pointer; transition: background 0.1s;
+    }
+    .wt-wc-btn:hover { background: rgba(255,255,255,0.1); }
+    .wt-wc-btn.close:hover { background: #c50f1f; opacity: 1; }
+
+    /* ── TAB BAR ─────────────────────────────────────── */
+    .wt-tabbar {
+      background: var(--tabbar);
+      display: flex;
+      align-items: flex-end;
+      height: 36px;
+      padding-top: 4px;
+      position: fixed; top: 32px; left: 0; right: 0; z-index: 299;
+      border-bottom: 1px solid #111;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .wt-tabbar::-webkit-scrollbar { display: none; }
+
+    .wt-tab {
+      display: flex; align-items: center; gap: 6px;
+      height: 32px;
+      padding: 0 12px 0 10px;
+      background: var(--tab-bg);
+      border-top: 1px solid transparent;
+      border-right: 1px solid #111;
+      font-size: 12px; color: var(--fg);
+      cursor: pointer; white-space: nowrap;
+      text-decoration: none;
+      opacity: 0.7;
+      transition: background 0.1s, opacity 0.1s;
+      min-width: 0; flex-shrink: 0;
+      position: relative;
+    }
+    .wt-tab:hover { background: var(--tab-hover); opacity: 0.9; }
+    .wt-tab.active {
+      background: var(--tab-act);
+      border-top-color: var(--accent);
+      opacity: 1;
+      border-right-color: #333;
+    }
+    /* trapezoid-ish shape for active tab */
+    .wt-tab.active::before {
+      content: '';
+      position: absolute; bottom: 0; left: -1px;
+      width: 1px; height: 100%;
+      background: #333;
+    }
+    .wt-tab-icon {
+      font-size: 10px; font-weight: bold;
+      color: var(--br-cyan); flex-shrink: 0;
+      background: rgba(58,150,221,0.15);
+      padding: 1px 4px; border-radius: 2px;
+    }
+    .wt-tab.active .wt-tab-icon { color: var(--br-cyan); }
+    .wt-tab-title { font-size: 12px; }
+    .wt-tab-close {
+      font-size: 10px; color: var(--fg);
+      opacity: 0; margin-left: 4px;
+      width: 14px; height: 14px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 2px; flex-shrink: 0;
+      transition: opacity 0.1s, background 0.1s;
+    }
+    .wt-tab:hover .wt-tab-close { opacity: 0.6; }
+    .wt-tab-close:hover { opacity: 1 !important; background: rgba(255,255,255,0.1); }
+    .wt-tab-new {
+      width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: var(--fg); opacity: 0.5;
+      cursor: pointer; flex-shrink: 0;
+      transition: background 0.1s, opacity 0.1s;
+    }
+    .wt-tab-new:hover { background: rgba(255,255,255,0.06); opacity: 0.9; }
+
+    /* ── TERMINAL CONTENT ────────────────────────────── */
+    .wt-content {
+      flex: 1;
+      padding: 12px 16px 40px;
+      overflow-y: auto;
+      background: var(--bg);
+      line-height: 1.5;
+      font-size: 14px;
+    }
+
+    /* ── TERMINAL TEXT HELPERS ───────────────────────── */
+    .ln      { display: block; white-space: pre-wrap; word-break: break-word; }
+    .ln + .ln { } /* lines stack naturally */
+
+    /* Prompt */
+    .ps-path  { color: var(--br-yellow); }
+    .ps-gt    { color: var(--br-blue); }
+    .ps-cmd   { color: var(--br-white); }
+    .ps-arg   { color: var(--br-cyan); }
+    .ps-str   { color: var(--br-yellow); }
+    .ps-flag  { color: var(--br-green); }
+    .ps-comment { color: var(--br-black); }
+
+    /* Output types */
+    .out      { color: var(--fg); }
+    .out-head { color: var(--br-white); font-weight: bold; }
+    .out-dim  { color: var(--br-black); }
+    .out-grn  { color: var(--br-green); }
+    .out-yel  { color: var(--br-yellow); }
+    .out-cyn  { color: var(--br-cyan); }
+    .out-red  { color: var(--br-red); }
+    .out-blue { color: var(--br-blue); }
+    .out-mag  { color: #B4009E; }
+
+    /* Table output */
+    .ps-table { display: block; margin: 6px 0; }
+    .ps-row { display: flex; gap: 24px; padding: 0; }
+    .ps-row.header { color: var(--br-white); border-bottom: 1px solid var(--br-black); padding-bottom: 2px; margin-bottom: 2px; }
+    .ps-cell { min-width: 150px; }
+    .ps-cell.sm { min-width: 80px; }
+    .ps-cell.lg { min-width: 220px; }
+
+    /* Separator line */
+    .sep { display: block; color: var(--br-black); margin: 4px 0; }
+    /* Blank line */
+    .blank { display: block; height: 14px; }
+
+    /* Cursor blink */
+    .cursor {
+      display: inline-block;
+      width: 8px; height: 1.1em;
+      background: var(--fg);
+      vertical-align: text-bottom;
+      animation: blink-block 1.2s step-end infinite;
+    }
+    @keyframes blink-block { 0%,100%{opacity:1} 50%{opacity:0} }
+
+    /* Clickable links in terminal (styled minimally) */
+    a.term-link {
+      color: var(--br-cyan);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-color: rgba(97,214,214,0.4);
+    }
+    a.term-link:hover { color: var(--br-white); }
+
+    /* Status bar at bottom */
+    .wt-statusbar {
+      background: var(--accent);
+      color: #fff;
+      font-size: 11px;
+      height: 22px;
+      display: flex; align-items: center;
+      gap: 16px; padding: 0 12px;
+      flex-shrink: 0;
+      position: fixed; bottom: 0; left: 0; right: 0;
+      z-index: 200;
+    }
+    .wt-statusbar span { opacity: 0.9; }
+    .wt-statusbar .sb-right {
+      margin-left: auto;
+      display: flex; gap: 16px;
+    }
+
+    /* Interactive button (looks like a PS command) */
+    .ps-btn {
+      display: inline-block;
+      background: transparent;
+      border: none;
+      color: var(--br-cyan);
+      font-family: inherit; font-size: 14px;
+      cursor: pointer;
+      padding: 0;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      text-decoration-color: rgba(97,214,214,0.4);
+    }
+    .ps-btn:hover { color: var(--br-white); }
+
+    /* Section spacing */
+    .section-gap { height: 24px; display: block; }
+
+    @media (max-width: 600px) {
+      .wt-content { font-size: 12px; padding: 8px; }
+      .ps-row { gap: 12px; }
+      .ps-cell { min-width: 100px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TITLE BAR -->
+  <div class="wt-titlebar">
+    <div class="wt-titlebar-left">
+      <div class="wt-hamburger">&#9776;</div>
+      <span class="wt-app-name">Scoop Dreams — Windows Terminal</span>
+    </div>
+    <div class="wt-window-controls">
+      <div class="wt-wc-btn">&#8210;</div>
+      <div class="wt-wc-btn">&#9633;</div>
+      <div class="wt-wc-btn close">&#10005;</div>
+    </div>
+  </div>
+
+  <!-- TAB BAR -->
+  <div class="wt-tabbar">
+    <a href="index.html" class="wt-tab active">
+      <span class="wt-tab-icon">PS</span>
+      <span class="wt-tab-title">Home</span>
+      <span class="wt-tab-close">&#10005;</span>
+    </a>
+    <a href="flavors.html" class="wt-tab">
+      <span class="wt-tab-icon">PS</span>
+      <span class="wt-tab-title">Flavors</span>
+      <span class="wt-tab-close">&#10005;</span>
+    </a>
+    <a href="about.html" class="wt-tab">
+      <span class="wt-tab-icon">PS</span>
+      <span class="wt-tab-title">About</span>
+      <span class="wt-tab-close">&#10005;</span>
+    </a>
+    <a href="requirements.html" class="wt-tab">
+      <span class="wt-tab-icon">PS</span>
+      <span class="wt-tab-title">Requirements</span>
+      <span class="wt-tab-close">&#10005;</span>
+    </a>
+    <div class="wt-tab-new">&#43;</div>
+  </div>
+
+  <!-- TERMINAL CONTENT -->
+  <div class="wt-content">
+
+    <span class="ln blank"></span>
+    <span class="ln"><span class="out-grn">    ____                              ____                               </span></span>
+    <span class="ln"><span class="out-grn">   / __/ ___ ___  ___  ___          / __ \ ____ ___  ___ ___ _  ___ ___</span></span>
+    <span class="ln"><span class="out-grn">  _\ \  / __// _ \/ _ \/ _ \       / /_/ // __// -_)/ _ `/  ' \(_-&lt;(__ )</span></span>
+    <span class="ln"><span class="out-grn"> /___/ /___/ \___/\___/ .__/      /_____//_/   \__/  \_,_/_/_/_/___//___/</span></span>
+    <span class="ln"><span class="out-dim">                      /_/                                                </span></span>
+    <span class="ln blank"></span>
+    <span class="ln"><span class="out-dim">                    🍦  small-batch · handcrafted · made with love</span></span>
+    <span class="ln blank"></span>
+    <span class="ln"><span class="sep">──────────────────────────────────────────────────────────────────────────</span></span>
+
+    <span class="ln blank"></span>
+    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span class="ps-cmd">Get-Welcome</span></span>
+    <span class="ln blank"></span>
+    <span class="ln"><span class="out-head">Welcome to Scoop Dreams 🍦</span></span>
+    <span class="ln"><span class="out">Handcrafted, small-batch ice cream made with real ingredients</span></span>
+    <span class="ln"><span class="out">and an unreasonable amount of love.</span></span>
+    <span class="ln blank"></span>
+    <span class="ln"><span class="out-dim">Life is short. Eat more ice cream.</span></span>
+    <span class="ln blank"></span>
+
+    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span class="ps-cmd">Get-CurrentFlavors</span> <span class="ps-flag">-Week</span> <span class="ps-str">"ThisWeek"</span> <span class="ps-flag">-Format</span> <span class="ps-str">Table</span></span>
+    <span class="ln blank"></span>
+    <div class="ps-table">
+      <div class="ps-row header">
+        <span class="ps-cell sm">Icon</span>
+        <span class="ps-cell">Name</span>
+        <span class="ps-cell sm">Status</span>
+        <span class="ps-cell lg">TastingNotes</span>
+      </div>
+      <div class="ps-row header" style="border:0;margin:0"><span style="color:var(--br-black)">----    ----                  ------      ------------                </span></div>
+      <div class="ps-row">
+        <span class="ps-cell sm out-dim">🌿</span>
+        <span class="ps-cell out-cyn">Mint Chip</span>
+        <span class="ps-cell sm out-grn">AVAILABLE</span>
+        <span class="ps-cell out-dim">cool · bright · classic</span>
+      </div>
+      <div class="ps-row">
+        <span class="ps-cell sm out-dim">🍓</span>
+        <span class="ps-cell out-cyn">Strawberry Balsamic</span>
+        <span class="ps-cell sm out-grn">AVAILABLE</span>
+        <span class="ps-cell out-dim">sweet · tangy · jammy</span>
+      </div>
+      <div class="ps-row">
+        <span class="ps-cell sm out-dim">🍯</span>
+        <span class="ps-cell out-cyn">Honey Lavender</span>
+        <span class="ps-cell sm out-grn">AVAILABLE</span>
+        <span class="ps-cell out-dim">floral · honey · dreamy</span>
+      </div>
+      <div class="ps-row">
+        <span class="ps-cell sm out-dim">🍫</span>
+        <span class="ps-cell out-cyn">Dark Choc Sea Salt</span>
+        <span class="ps-cell sm out-grn">AVAILABLE</span>
+        <span class="ps-cell out-dim">bitter · rich · salted</span>
+      </div>
+    </div>
+
+    <span class="ln blank"></span>
+    <span class="ln"><span class="out-dim"># 4 flavors returned. See more: </span><a href="flavors.html" class="term-link">Invoke-FlavorBoard</a></span>
+    <span class="ln blank"></span>
+
+    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span class="ps-cmd">Get-Quote</span></span>
+    <span class="ln blank"></span>
+    <span class="ln"><span class="out-yel">"Age does not diminish the extreme disappointment of having an</span></span>
+    <span class="ln"><span class="out-yel"> ice-cream cone knocked from your hand."</span></span>
+    <span class="ln"><span class="out-dim">         — Me or smt</span></span>
+    <span class="ln blank"></span>
+
+    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span class="ps-cmd">Get-Process</span> <span class="ps-flag">-Name</span> <span class="ps-str">"HowWeScoop"</span></span>
+    <span class="ln blank"></span>
+    <div class="ps-table">
+      <div class="ps-row header">
+        <span class="ps-cell sm">Step</span>
+        <span class="ps-cell">Name</span>
+        <span class="ps-cell lg">Description</span>
+      </div>
+      <div class="ps-row header" style="border:0;margin:0"><span style="color:var(--br-black)">----    ----                  -----------                             </span></div>
+      <div class="ps-row">
+        <span class="ps-cell sm out-blue">01</span>
+        <span class="ps-cell out-cyn">Source the good stuff</span>
+        <span class="ps-cell out-dim">Local farms for dairy, small producers for specialty</span>
+      </div>
+      <div class="ps-row">
+        <span class="ps-cell sm out-blue">02</span>
+        <span class="ps-cell out-cyn">Churn in small batches</span>
+        <span class="ps-cell out-dim">Max 2 gallons per flavor — better texture, more flavor</span>
+      </div>
+      <div class="ps-row">
+        <span class="ps-cell sm out-blue">03</span>
+        <span class="ps-cell out-cyn">Serve with joy</span>
+        <span class="ps-cell out-dim">The best experience starts with the person at the counter</span>
+      </div>
+    </div>
+
+    <span class="ln blank"></span>
+    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span class="ps-cmd">Send-Message</span> <span class="ps-flag">-To</span> <span class="ps-str">"hello@scoopdreams.example.com"</span></span>
+    <span class="ln blank"></span>
+    <span class="ln"><span class="out">Contact options:</span></span>
+    <span class="ln"><span class="out-dim">  </span><a href="mailto:hello@scoopdreams.example.com" class="term-link">✉  hello@scoopdreams.example.com</a></span>
+    <span class="ln"><span class="out-dim">  </span><a href="tel:+15551234567" class="term-link">📞 (555) 123-4567</a></span>
+    <span class="ln"><span class="out-dim">  </span><a href="https://github.com" target="_blank" class="term-link">🐙 github.com/scoopdreams</a></span>
+    <span class="ln blank"></span>
+
+    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span class="cursor"></span></span>
+    <span class="ln blank"></span>
+    <span class="section-gap"></span>
+
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="wt-statusbar">
+    <span>&#10070; PowerShell</span>
+    <span>C:\ScoopDreams</span>
+    <div class="sb-right">
+      <span>UTF-8</span>
+      <span>CRLF</span>
+      <span>🍦 Scoop Dreams</span>
+    </div>
+  </div>
+
+</body>
+</html>
