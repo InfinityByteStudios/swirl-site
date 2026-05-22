@@ -1,673 +1,512 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Scoop Dreams — Windows Terminal</title>
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍦</text></svg>" />
+  <title>Hack Club - Build. Ship. Learn.</title>
+  <link rel="icon" href="https://assets.hackclub.com/favicon.ico" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
-    /* ── WINDOWS TERMINAL CHROME ─────────────────────── */
-    :root {
-      /* Campbell color scheme (Windows Terminal default) */
-      --bg: #0C0C0C;
-      --titlebar: #1e1e1e;
-      --tabbar: #1e1e1e;
-      --tab-bg: #2d2d2d;
-      --tab-act: #0C0C0C;
-      --tab-hover: #3d3d3d;
-      --fg: #CCCCCC;
-      --fg-bright: #F2F2F2;
-      --black: #0C0C0C;
-      --red: #C50F1F;
-      --green: #13A10E;
-      --yellow: #C19C00;
-      --blue: #0037DA;
-      --magenta: #881798;
-      --cyan: #3A96DD;
-      --white: #CCCCCC;
-      --br-black: #767676;
-      --br-red: #E74856;
-      --br-green: #16C60C;
-      --br-yellow: #F9F1A5;
-      --br-blue: #3B78FF;
-      --br-magenta: #B4009E;
-      --br-cyan: #61D6D6;
-      --br-white: #F2F2F2;
-      --accent: #3A96DD;
-    }
-
-    * {
-      box-sizing: border-box;
+    body {
+      background-color: #f5f2ee;
+      color: #0f0f0f;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 17px;
       margin: 0;
       padding: 0;
     }
 
-    html,
-    body {
-      height: 100%;
+    /* NAV */
+    nav {
+      border-bottom: 2px solid #0f0f0f;
+      padding: 16px 48px;
+      background-color: #f5f2ee;
     }
 
-    body {
-      font-family: 'Cascadia Code', 'Cascadia Mono', Consolas, 'Courier New', monospace;
-      background: var(--bg);
-      color: var(--fg);
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      overflow-x: hidden;
-      padding-top: 68px;
-    }
-
-    /* ── TITLE BAR ───────────────────────────────────── */
-    .wt-titlebar {
-      background: var(--titlebar);
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-shrink: 0;
-      user-select: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      z-index: 300;
-      border-bottom: 1px solid #111;
-    }
-
-    .wt-titlebar-left {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      height: 100%;
-    }
-
-    .wt-hamburger {
-      width: 46px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--fg);
-      font-size: 16px;
-      transition: background 0.1s;
-      cursor: pointer;
-    }
-
-    .wt-hamburger:hover {
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .wt-app-name {
-      font-size: 12px;
-      color: var(--fg);
-      opacity: 0.7;
-      letter-spacing: 0.02em;
-      padding-left: 4px;
-    }
-
-    .wt-window-controls {
-      display: flex;
-      height: 100%;
-    }
-
-    .wt-wc-btn {
-      width: 46px;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: var(--fg);
-      opacity: 0.8;
-      cursor: pointer;
-      transition: background 0.1s;
-    }
-
-    .wt-wc-btn:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .wt-wc-btn.close:hover {
-      background: #c50f1f;
-      opacity: 1;
-    }
-
-    /* ── TAB BAR ─────────────────────────────────────── */
-    .wt-tabbar {
-      background: var(--tabbar);
-      display: flex;
-      align-items: flex-end;
-      height: 36px;
-      padding-top: 4px;
-      position: fixed;
-      top: 32px;
-      left: 0;
-      right: 0;
-      z-index: 299;
-      border-bottom: 1px solid #111;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-
-    .wt-tabbar::-webkit-scrollbar {
-      display: none;
-    }
-
-    .wt-tab {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      height: 32px;
-      padding: 0 12px 0 10px;
-      background: var(--tab-bg);
-      border-top: 1px solid transparent;
-      border-right: 1px solid #111;
-      font-size: 12px;
-      color: var(--fg);
-      cursor: pointer;
-      white-space: nowrap;
+    nav a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #6b6560;
       text-decoration: none;
-      opacity: 0.7;
-      transition: background 0.1s, opacity 0.1s;
-      min-width: 0;
-      flex-shrink: 0;
-      position: relative;
+      margin-right: 28px;
     }
 
-    .wt-tab:hover {
-      background: var(--tab-hover);
-      opacity: 0.9;
+    nav a:hover {
+      color: #ec3750;
     }
 
-    .wt-tab.active {
-      background: var(--tab-act);
-      border-top-color: var(--accent);
-      opacity: 1;
-      border-right-color: #333;
+    nav .logo {
+      font-size: 1rem;
+      color: #0f0f0f;
+      margin-right: 48px;
     }
 
-    /* trapezoid-ish shape for active tab */
-    .wt-tab.active::before {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: -1px;
-      width: 1px;
-      height: 100%;
-      background: #333;
+    nav .logo span {
+      color: #ec3750;
     }
 
-    .wt-tab-icon {
-      font-size: 10px;
-      font-weight: bold;
-      color: var(--br-cyan);
-      flex-shrink: 0;
-      background: rgba(58, 150, 221, 0.15);
-      padding: 1px 4px;
-      border-radius: 2px;
+    /* HERO */
+    .hero {
+      padding: 80px 48px 60px;
+      border-bottom: 2px solid #0f0f0f;
     }
 
-    .wt-tab.active .wt-tab-icon {
-      color: var(--br-cyan);
+    .hero-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #ec3750;
+      margin-bottom: 20px;
     }
 
-    .wt-tab-title {
-      font-size: 12px;
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 4rem;
+      line-height: 1.05;
+      font-weight: 400;
+      margin: 0 0 32px 0;
     }
 
-    .wt-tab-close {
-      font-size: 10px;
-      color: var(--fg);
-      opacity: 0;
-      margin-left: 4px;
-      width: 14px;
-      height: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 2px;
-      flex-shrink: 0;
-      transition: opacity 0.1s, background 0.1s;
+    .hero h1 em {
+      font-style: italic;
+      color: #ec3750;
     }
 
-    .wt-tab:hover .wt-tab-close {
-      opacity: 0.6;
-    }
-
-    .wt-tab-close:hover {
-      opacity: 1 !important;
-      background: rgba(255, 255, 255, 0.1);
-    }
-
-    .wt-tab-new {
-      width: 32px;
-      height: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      color: var(--fg);
-      opacity: 0.5;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: background 0.1s, opacity 0.1s;
-    }
-
-    .wt-tab-new:hover {
-      background: rgba(255, 255, 255, 0.06);
-      opacity: 0.9;
-    }
-
-    /* ── TERMINAL CONTENT ────────────────────────────── */
-    .wt-content {
-      flex: 1;
-      padding: 12px 16px 40px;
-      overflow-y: auto;
-      background: var(--bg);
-      line-height: 1.5;
-      font-size: 14px;
-    }
-
-    /* ── TERMINAL TEXT HELPERS ───────────────────────── */
-    .ln {
+    .hero-img {
+      width: 220px;
+      border: 2px solid #0f0f0f;
       display: block;
-      white-space: pre-wrap;
-      word-break: break-word;
+      padding: 20px;
+      background: white;
+      margin-bottom: 24px;
     }
 
-    .ln+.ln {}
-
-    /* lines stack naturally */
-
-    /* Prompt */
-    .ps-path {
-      color: var(--br-yellow);
+    .hero-desc {
+      font-size: 1.05rem;
+      color: #6b6560;
+      line-height: 1.75;
+      max-width: 500px;
     }
 
-    .ps-gt {
-      color: var(--br-blue);
+    /* STRIP */
+    .strip {
+      background-color: #ec3750;
+      color: white;
+      padding: 14px 48px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 2px solid #0f0f0f;
     }
 
-    .ps-cmd {
-      color: var(--br-white);
+    /* SECTIONS */
+    .section {
+      padding: 64px 48px;
+      border-bottom: 2px solid #0f0f0f;
     }
 
-    .ps-arg {
-      color: var(--br-cyan);
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: #6b6560;
+      margin-bottom: 32px;
     }
 
-    .ps-str {
-      color: var(--br-yellow);
+    .section h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem;
+      font-weight: 400;
+      margin-bottom: 20px;
+      line-height: 1.15;
     }
 
-    .ps-flag {
-      color: var(--br-green);
+    /* 3 paragraphs with unique CSS - scoop feature */
+    .para-one {
+      max-width: 640px;
+      color: #6b6560;
+      line-height: 1.8;
+      font-size: 1rem;
+      margin-bottom: 16px;
     }
 
-    .ps-comment {
-      color: var(--br-black);
+    .para-two {
+      max-width: 580px;
+      color: #5a5050;
+      line-height: 1.9;
+      font-size: 0.97rem;
+      border-left: 3px solid #ec3750;
+      padding-left: 20px;
+      margin-bottom: 16px;
     }
 
-    /* Output types */
-    .out {
-      color: var(--fg);
+    .para-three {
+      max-width: 620px;
+      color: #6b6560;
+      line-height: 1.75;
+      font-size: 0.95rem;
+      font-style: italic;
+      margin-bottom: 0;
     }
 
-    .out-head {
-      color: var(--br-white);
-      font-weight: bold;
+    /* CARDS */
+    .card {
+      background: white;
+      border: 2px solid #0f0f0f;
+      padding: 36px 32px;
+      margin-bottom: 16px;
     }
 
-    .out-dim {
-      color: var(--br-black);
+    .card-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 3rem;
+      color: #ec3750;
+      line-height: 1;
+      margin-bottom: 16px;
     }
 
-    .out-grn {
-      color: var(--br-green);
+    .card h3 {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 10px;
+      margin-top: 0;
     }
 
-    .out-yel {
-      color: var(--br-yellow);
+    .card p {
+      font-size: 0.9rem;
+      color: #6b6560;
+      line-height: 1.7;
+      margin: 0;
     }
 
-    .out-cyn {
-      color: var(--br-cyan);
+    /* QUOTE */
+    .quote-section {
+      padding: 72px 48px;
+      border-bottom: 2px solid #0f0f0f;
+      background-color: #0f0f0f;
+      color: #f5f2ee;
     }
 
-    .out-red {
-      color: var(--br-red);
+    blockquote {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      font-weight: 400;
+      font-style: italic;
+      line-height: 1.3;
+      max-width: 800px;
+      margin: 0 0 28px 0;
+      border-left: 4px solid #ec3750;
+      padding-left: 32px;
     }
 
-    .out-blue {
-      color: var(--br-blue);
+    .quote-attr {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #888;
+      padding-left: 36px;
     }
 
-    .out-mag {
-      color: #B4009E;
+    /* VALUES */
+    .value-item {
+      border: 2px solid #0f0f0f;
+      padding: 28px 32px;
+      margin-bottom: 12px;
+      background: white;
     }
 
-    /* Table output */
-    .ps-table {
-      display: block;
-      margin: 6px 0;
+    .value-index {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      color: #ec3750;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
     }
 
-    .ps-row {
-      display: flex;
-      gap: 24px;
+    .value-item h4 {
+      font-weight: 700;
+      margin: 8px 0 6px 0;
+      font-size: 0.95rem;
+    }
+
+    .value-item p {
+      font-size: 0.88rem;
+      color: #6b6560;
+      line-height: 1.65;
+      margin: 0;
+    }
+
+    /* HTML LIST - scoop feature */
+    .things-list {
+      list-style: none;
       padding: 0;
+      margin: 24px 0 0 0;
     }
 
-    .ps-row.header {
-      color: var(--br-white);
-      border-bottom: 1px solid var(--br-black);
-      padding-bottom: 2px;
-      margin-bottom: 2px;
+    .things-list li {
+      font-size: 0.95rem;
+      color: #6b6560;
+      padding: 10px 0;
+      border-bottom: 1px solid #d6d0c8;
+      line-height: 1.6;
     }
 
-    .ps-cell {
-      min-width: 150px;
+    .things-list li:last-child {
+      border-bottom: none;
     }
 
-    .ps-cell.sm {
-      min-width: 80px;
+    .things-list li::before {
+      content: "/ ";
+      color: #ec3750;
+      font-family: 'DM Mono', monospace;
     }
 
-    .ps-cell.lg {
-      min-width: 220px;
+    /* CTA */
+    .cta {
+      padding: 72px 48px;
     }
 
-    /* Separator line */
-    .sep {
-      display: block;
-      color: var(--br-black);
-      margin: 4px 0;
+    .cta h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.6rem;
+      font-weight: 400;
+      line-height: 1.15;
+      margin-bottom: 24px;
     }
 
-    /* Blank line */
-    .blank {
-      display: block;
-      height: 14px;
-    }
-
-    /* Cursor blink */
-    .cursor {
+    /* HTML BUTTON - scoop feature */
+    .cta-btn {
       display: inline-block;
-      width: 8px;
-      height: 1.1em;
-      background: var(--fg);
-      vertical-align: text-bottom;
-      animation: blink-block 1.2s step-end infinite;
-    }
-
-    @keyframes blink-block {
-
-      0%,
-      100% {
-        opacity: 1
-      }
-
-      50% {
-        opacity: 0
-      }
-    }
-
-    /* Clickable links in terminal (styled minimally) */
-    a.term-link {
-      color: var(--br-cyan);
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      text-decoration-color: rgba(97, 214, 214, 0.4);
-    }
-
-    a.term-link:hover {
-      color: var(--br-white);
-    }
-
-    /* Status bar at bottom */
-    .wt-statusbar {
-      background: var(--accent);
-      color: #fff;
-      font-size: 11px;
-      height: 22px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      padding: 0 12px;
-      flex-shrink: 0;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 200;
-    }
-
-    .wt-statusbar span {
-      opacity: 0.9;
-    }
-
-    .wt-statusbar .sb-right {
-      margin-left: auto;
-      display: flex;
-      gap: 16px;
-    }
-
-    /* Interactive button (looks like a PS command) */
-    .ps-btn {
-      display: inline-block;
-      background: transparent;
-      border: none;
-      color: var(--br-cyan);
-      font-family: inherit;
-      font-size: 14px;
+      background-color: #ec3750;
+      color: white;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      padding: 16px 36px;
+      border: 2px solid #0f0f0f;
       cursor: pointer;
-      padding: 0;
-      text-decoration: underline;
-      text-underline-offset: 2px;
-      text-decoration-color: rgba(97, 214, 214, 0.4);
+      margin-right: 12px;
     }
 
-    .ps-btn:hover {
-      color: var(--br-white);
+    .cta-btn:hover {
+      background-color: #0f0f0f;
     }
 
-    /* Section spacing */
-    .section-gap {
-      height: 24px;
-      display: block;
+    .cta-btn-ghost {
+      display: inline-block;
+      background-color: transparent;
+      color: #0f0f0f;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      text-decoration: none;
+      padding: 16px 36px;
+      border: 2px solid #0f0f0f;
+      cursor: pointer;
     }
 
-    @media (max-width: 600px) {
-      .wt-content {
-        font-size: 12px;
-        padding: 8px;
-      }
+    .cta-btn-ghost:hover {
+      background-color: #0f0f0f;
+      color: white;
+    }
 
-      .ps-row {
-        gap: 12px;
-      }
+    /* FOOTER - scoop feature */
+    footer {
+      border-top: 2px solid #0f0f0f;
+      padding: 32px 48px;
+      background-color: #0f0f0f;
+      color: #888;
+    }
 
-      .ps-cell {
-        min-width: 100px;
-      }
+    .footer-top {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.8rem;
+      color: #f5f2ee;
+      margin-bottom: 20px;
+    }
+
+    .footer-top span {
+      color: #ec3750;
+    }
+
+    .footer-links {
+      margin-bottom: 20px;
+    }
+
+    .footer-links a {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #888;
+      text-decoration: none;
+      margin-right: 24px;
+    }
+
+    .footer-links a:hover {
+      color: #ec3750;
+    }
+
+    .footer-bottom {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #555;
+      border-top: 1px solid #222;
+      padding-top: 20px;
+      margin-top: 8px;
     }
   </style>
 </head>
-
 <body>
 
-  <!-- TITLE BAR -->
-  <div class="wt-titlebar">
-    <div class="wt-titlebar-left">
-      <div class="wt-hamburger">&#9776;</div>
-      <span class="wt-app-name">Scoop Dreams</span>
-    </div>
-    <div class="wt-window-controls">
-      <div class="wt-wc-btn">&#8210;</div>
-      <div class="wt-wc-btn">&#9633;</div>
-      <div class="wt-wc-btn close">&#10005;</div>
-    </div>
-  </div>
+  <nav>
+    <a class="logo" href="index.html">Hack<span>Club</span></a>
+    <a href="index.html">Home</a>
+    <a href="about.html">About Me</a>
+    <a href="https://hackclub.com" target="_blank">Hack Club</a>
+  </nav>
 
-  <!-- TAB BAR -->
-  <div class="wt-tabbar">
-    <a href="index.html" class="wt-tab active"><span class="wt-tab-icon">PS</span><span
-        class="wt-tab-title">Home</span><span class="wt-tab-close">&#10005;</span></a>
-    <a href="flavors.html" class="wt-tab"><span class="wt-tab-icon">PS</span><span
-        class="wt-tab-title">Flavors</span><span class="wt-tab-close">&#10005;</span></a>
-    <a href="about.html" class="wt-tab"><span class="wt-tab-icon">PS</span><span class="wt-tab-title">About</span><span
-        class="wt-tab-close">&#10005;</span></a>
-    <div class="wt-tab-new">&#43;</div>
-  </div>
+  <section class="hero">
+    <p class="hero-label">A global network of student hackers</p>
+    <h1>Build real things.<br><em>Ship them.</em><br>Learn together.</h1>
 
-  <!-- TERMINAL CONTENT -->
-  <div class="wt-content">
+    <img
+      class="hero-img"
+      src="https://assets.hackclub.com/flag-standalone.svg"
+      alt="Hack Club flag with dinosaur mascot Orpheus"
+    />
 
-    <span class="ln blank"></span>
-<pre class="out-grn" style="margin: 0; font-family: inherit; font-size: inherit; line-height: 1.2;">
-   ____                      ____
-  / __/______  ___  ___     / __ \_______  ___  __ _  ___
- _\ \/ __/ _ \/ _ \/ _ \   / /_/ / __/ -_)/ _ `/  ' \(_-&lt;
-/___/\__/\___/\___/ .__/  /_____/_/  \__/\_,_/_/_/_/___/
-                 /_/
-</pre>
-    <span class="ln blank"></span>
-    <span class="ln"><span class="out-dim">  🍦 small-batch · handcrafted · made with love</span></span>
-    <span class="ln blank"></span>
-    <div style="padding-left: 24px; margin-bottom: 24px; display: flex; align-items: center; gap: 12px;">
-      <span class="out-dim">thank u</span>
-      <img src="assets/hackclub-flag.svg" alt="Hack Club logo" height="100">
-    </div>
-    <span class="ln"><span
-        class="sep">──────────────────────────────────────────────────────────────────────────</span></span>
+    <p class="hero-desc">
+      Hack Club is a nonprofit network of high school coding clubs where
+      students build projects, attend hackathons, and grow as makers,
+      all led by students, for students.
+    </p>
+  </section>
 
-    <span class="ln blank"></span>
-    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span
-        class="ps-cmd">Get-Welcome</span></span>
-    <span class="ln blank"></span>
-    <span class="ln"><span class="out-head">Welcome to Scoop Dreams 🍦</span></span>
-    <span class="ln"><span class="out">Small-batch ice cream made with real ingredients.</span></span>
-    <span class="ln"><span class="out">We make it by hand, in small amounts, and we sell out most days.</span></span>
-    <span class="ln blank"></span>
-    <span class="ln"><span class="out-dim">Life is short. Eat more ice cream.</span></span>
-    <span class="ln blank"></span>
+  <div class="strip">Est. 2014 - 20,000+ hackers - 300+ clubs worldwide</div>
 
-    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span
-        class="ps-cmd">Get-CurrentFlavors</span> <span class="ps-flag">-Week</span> <span
-        class="ps-str">"ThisWeek"</span> <span class="ps-flag">-Format</span> <span class="ps-str">Table</span></span>
-    <span class="ln blank"></span>
-    <div class="ps-table">
-      <div class="ps-row header">
-        <span class="ps-cell sm">Icon</span>
-        <span class="ps-cell">Name</span>
-        <span class="ps-cell sm">Status</span>
-        <span class="ps-cell lg">TastingNotes</span>
-      </div>
-      <div class="ps-row header" style="border:0;margin:0"><span style="color:var(--br-black)">---- ---- ------
-          ------------ </span></div>
-      <div class="ps-row">
-        <span class="ps-cell sm out-dim">🌿</span>
-        <span class="ps-cell out-cyn">Mint Chip</span>
-        <span class="ps-cell sm out-grn">AVAILABLE</span>
-        <span class="ps-cell out-dim">cool · bright · classic</span>
-      </div>
-      <div class="ps-row">
-        <span class="ps-cell sm out-dim">🍓</span>
-        <span class="ps-cell out-cyn">Strawberry Balsamic</span>
-        <span class="ps-cell sm out-grn">AVAILABLE</span>
-        <span class="ps-cell out-dim">sweet · tangy · jammy</span>
-      </div>
-      <div class="ps-row">
-        <span class="ps-cell sm out-dim">🍯</span>
-        <span class="ps-cell out-cyn">Honey Lavender</span>
-        <span class="ps-cell sm out-grn">AVAILABLE</span>
-        <span class="ps-cell out-dim">floral · honey · dreamy</span>
-      </div>
-      <div class="ps-row">
-        <span class="ps-cell sm out-dim">🍫</span>
-        <span class="ps-cell out-cyn">Dark Choc Sea Salt</span>
-        <span class="ps-cell sm out-grn">AVAILABLE</span>
-        <span class="ps-cell out-dim">bitter · rich · salted</span>
-      </div>
+  <section class="section">
+    <p class="section-label">01 - What we do</p>
+    <h2>Student-run clubs,<br>real projects, real impact.</h2>
+
+    <p class="para-one">
+      Every Hack Club is run by a student at their school. Members show up,
+      pick something to build, and actually ship it. No busywork. No tests.
+      Just making things that work.
+    </p>
+
+    <p class="para-two">
+      Hack Club started in 2014 and has grown into a global community.
+      Students in over 30 countries have started clubs, shipped projects,
+      and found their people through this network.
+    </p>
+
+    <p class="para-three">
+      The best part is that nobody is grading you. You build what you want,
+      and you learn because you actually want to, not because you have to.
+    </p>
+
+    <br>
+
+    <div class="card">
+      <div class="card-num">01</div>
+      <h3>Start a Club</h3>
+      <p>Any high schooler can apply to start a Hack Club at their school. Hack Club provides resources, support, and a community of leaders.</p>
     </div>
 
-    <span class="ln blank"></span>
-    <span class="ln"><span class="out-dim"># 4 flavors returned. See more: </span><a href="flavors.html"
-        class="term-link">Invoke-FlavorBoard</a></span>
-    <span class="ln blank"></span>
-
-    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span
-        class="ps-cmd">Get-Quote</span></span>
-    <span class="ln blank"></span>
-    <span class="ln"><span class="out-yel">"Age does not diminish the extreme disappointment</span></span>
-    <span class="ln"><span class="out-yel"> of having an ice-cream cone knocked from your hand."</span></span>
-    <span class="ln"><span class="out-dim"> or something like that</span></span>
-    <span class="ln blank"></span>
-
-    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span
-        class="ps-cmd">Get-Process</span> <span class="ps-flag">-Name</span> <span
-        class="ps-str">"HowWeScoop"</span></span>
-    <span class="ln blank"></span>
-    <div class="ps-table">
-      <div class="ps-row header">
-        <span class="ps-cell sm">Step</span>
-        <span class="ps-cell">Name</span>
-        <span class="ps-cell lg">Description</span>
-      </div>
-      <div class="ps-row header" style="border:0;margin:0"><span style="color:var(--br-black)">---- ---- -----------
-        </span></div>
-      <div class="ps-row">
-        <span class="ps-cell sm out-blue">01</span>
-        <span class="ps-cell out-cyn">Source the good stuff</span>
-        <span class="ps-cell out-dim">Local farms for dairy, small producers for specialty</span>
-      </div>
-      <div class="ps-row">
-        <span class="ps-cell sm out-blue">02</span>
-        <span class="ps-cell out-cyn">Churn in small batches</span>
-        <span class="ps-cell out-dim">Max 2 gallons per flavor — better texture, more flavor</span>
-      </div>
-      <div class="ps-row">
-        <span class="ps-cell sm out-blue">03</span>
-        <span class="ps-cell out-cyn">Serve with joy</span>
-        <span class="ps-cell out-dim">The best experience starts with the person at the counter</span>
-      </div>
+    <div class="card">
+      <div class="card-num">02</div>
+      <h3>Build Projects</h3>
+      <p>From websites and games to hardware and open source tools, members build things they actually care about during meetings.</p>
     </div>
 
-    <span class="ln blank"></span>
-    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span
-        class="ps-cmd">Send-Message</span> <span class="ps-flag">-To</span> <span
-        class="ps-str">"hello@scoopdreams.example.com"</span></span>
-    <span class="ln blank"></span>
-    <span class="ln"><span class="out">Contact options:</span></span>
-    <span class="ln"><span class="out-dim"> </span><a href="mailto:hello@scoopdreams.example.com" class="term-link">✉
-        hello@scoopdreams.example.com</a></span>
-    <span class="ln"><span class="out-dim"> </span><a href="tel:+15551234567" class="term-link">📞 (555)
-        123-4567</a></span>
-    <span class="ln"><span class="out-dim"> </span><a href="https://github.com/InfinityByteStudios/swirl-site" target="_blank" class="term-link">🐙
-        GitHub</a></span>
-    <span class="ln blank"></span>
-
-    <span class="ln"><span class="ps-path">PS C:\ScoopDreams</span><span class="ps-gt">&gt;</span> <span
-        class="cursor"></span></span>
-    <span class="ln blank"></span>
-    <span class="section-gap"></span>
-
-  </div>
-
-  <!-- STATUS BAR -->
-  <div class="wt-statusbar">
-    <span>&#10070; PowerShell</span>
-    <span>C:\ScoopDreams</span>
-    <div class="sb-right">
-      <span>UTF-8</span>
-      <span>CRLF</span>
-      <span>🍦 Scoop Dreams</span>
+    <div class="card">
+      <div class="card-num">03</div>
+      <h3>Ship and Grow</h3>
+      <p>Finishing and shipping something real is the whole point. Hack Club pushes you beyond tutorials and puts your work into the world.</p>
     </div>
-  </div>
+  </section>
+
+  <section class="quote-section">
+    <blockquote>
+      The best way to learn how to code is to build things that matter to you.
+    </blockquote>
+    <p class="quote-attr">Hack Club - Core philosophy</p>
+  </section>
+
+  <section class="section">
+    <p class="section-label">02 - What we stand for</p>
+    <h2>Made by students,<br>not for students.</h2>
+
+    <div class="value-item">
+      <span class="value-index">A</span>
+      <h4>Maker over consumer</h4>
+      <p>The goal is always to build something, not to passively watch tutorials or copy boilerplate.</p>
+    </div>
+
+    <div class="value-item">
+      <span class="value-index">B</span>
+      <h4>Transparency</h4>
+      <p>Hack Club is radically open. Finances, code, and decisions are shared publicly with the community.</p>
+    </div>
+
+    <div class="value-item">
+      <span class="value-index">C</span>
+      <h4>Ship early, ship often</h4>
+      <p>Done is better than perfect. Getting something out there beats a polished idea that never ships.</p>
+    </div>
+
+    <div class="value-item">
+      <span class="value-index">D</span>
+      <h4>Inclusive by default</h4>
+      <p>All skill levels welcome. Hack Club is for anyone with curiosity, you do not need experience to show up.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <p class="section-label">03 - Things you can build</p>
+    <h2>Some ideas to get started.</h2>
+
+    <ul class="things-list">
+      <li>A personal website about yourself</li>
+      <li>A simple browser game using HTML and CSS</li>
+      <li>A tool that solves a problem you have</li>
+      <li>An open source project on GitHub</li>
+      <li>A hardware project with a Raspberry Pi</li>
+      <li>Anything else you think is cool</li>
+    </ul>
+  </section>
+
+  <section class="cta">
+    <h2>Ready to start building something real?</h2>
+    <a class="cta-btn" href="https://hackclub.com" target="_blank">Join Hack Club</a>
+    <a class="cta-btn-ghost" href="about.html">About Me</a>
+  </section>
+
+  <footer>
+    <div class="footer-top">Hack<span>Club</span></div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="about.html">About Me</a>
+      <a href="https://hackclub.com" target="_blank">hackclub.com</a>
+      <a href="mailto:hello@example.com">Contact</a>
+    </div>
+    <div class="footer-bottom">
+      Hack Club is a 501(c)(3) nonprofit &nbsp;|&nbsp; Made by a student, for students
+    </div>
+  </footer>
 
 </body>
-
 </html>
